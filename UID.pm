@@ -9,7 +9,7 @@ Proc::UID - Manipulate a variety of UID and GID settings.
 
 	use Proc::UID qw(setuid_permanent);
 	print "Permanently dropping privileges to $new_uid\n";
-	setuid_permanent($new_uid); # Throws an exception on failure.
+	drop_priv_perm($new_uid); # Throws an exception on failure.
 
 
 =head1 WARNING
@@ -49,6 +49,18 @@ underlying UIDs.
 =head2 FUNCTIONAL INTERFACE
 
 	To be completed.
+
+=head2 PREFERRED INTERFACE
+
+=over 4
+
+=item B<drop_priv_temp($uid)>
+
+=item B<drop_priv_perm($uid)>
+
+=item B<restore_priv()>
+
+=back
 
 =head1 BUGS
 
