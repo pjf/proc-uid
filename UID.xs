@@ -19,6 +19,8 @@ MODULE = Secure::UID  PACKAGE = Secure::UID
 
 PROTOTYPES: DISABLE
 
+# Get our saved UID
+
 int
 getsuid()
 	PREINIT:
@@ -30,6 +32,23 @@ getsuid()
 			RETVAL = -1;
 		} else {
 			RETVAL = suid;
+		}
+	OUTPUT:
+		RETVAL
+
+# Get our saved GID 
+
+int
+getsgid()
+	PREINIT:
+		int ret;
+		int rgid, egid, sgid;
+	CODE:
+		ret = getresgid(&rgid, &egid, &sgid);
+		if (ret == -1) {
+			RETVAL = -1;
+		} else {
+			RETVAL = sgid;
 		}
 	OUTPUT:
 		RETVAL
