@@ -32,7 +32,7 @@ ok(1);	# Module loaded.
 # This is a sanity check.
 
 {
-	local $^W = 0;
+	no warnings 'once';
 	ok(defined(*{Proc::UID::no_such_sub}{CODE}),"",
 		"no_such_sub appears defined.\n");
 }

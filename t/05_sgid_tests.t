@@ -3,7 +3,7 @@ use strict;
 
 # This exists purely to call our child test script.
 
-delete $ENV{PATH};
+$ENV{PATH} = "/bin";
 delete $ENV{ENV};
 
 my $TEST_UID = 12345;	# Must be different from that in 00_setup.t
