@@ -47,7 +47,8 @@ use strict;
 use warnings;
 use XSLoader;
 use Exporter;
-use vars qw/$VERSION @ISA @EXPORT_OK $SUID $SGID $EUID $RUID/;
+use Carp;
+use vars qw/$VERSION @ISA @EXPORT_OK $SUID $SGID $EUID $RUID $EGID $RGID/;
 
 $VERSION = 0.02;
 @ISA = qw(Exporter);
@@ -61,28 +62,26 @@ $VERSION = 0.02;
 # Most of our hard work is done in XS.
 XSLoader::load 'Proc::UID';
 
-# These are simply standard names for $<, $>, $( and $).
-
-{ no warnings 'once';
-	*RGID = *(;
-	*EGID = *);
-}
-
 # Ties for SUID/SGID
 
 tie $SUID, 'Proc::UID::SUID';
 tie $SGID, 'Proc::UID::SGID';
 tie $EUID, 'Proc::UID::EUID';
 tie $RUID, 'Proc::UID::RUID';
+tie $EGID, 'Proc::UID::EGID';
+tie $RGID, 'Proc::UID::RGID';
 
-# These *should* be expanded to actually check the operation succeeded.
+# These use Perl's interface to set privileges, as that handles updating
+# of PL_uid, PL_euid, etc for us.  However they die in the case of an
+# updating failure.
 
-sub setruid { $< = $_[0]; }
-sub seteuid { $> = $_[0]; }
-sub setrgid { $( = $_[0]; }
-sub setegid { $) = $_[0]; }
+sub setruid { $< = $_[0]; croak "setruid failed" unless ($_[0] == $<); }
+sub seteuid { $> = $_[0]; croak "seteuid failed" unless ($_[0] == $>); }
+sub setrgid { $( = $_[0]; croak "setrgid failed" unless ($_[0] == $(); }
+sub setegid { $) = $_[0]; croak "setegid failed" unless ($_[0] == $)); }
 
 # Packages for tied variables are from here on.
+# Saved [UG]ID...
 package Proc::UID::SUID;
 sub TIESCALAR { my $val; return bless \$val, $_[0]; }
 sub FETCH     { return Proc::UID::getsuid(); }
@@ -93,6 +92,7 @@ sub TIESCALAR { my $val; return bless \$val, $_[0]; }
 sub FETCH     { return Proc::UID::getsgid(); }
 sub STORE     { return Proc::UID::setsgid($_[1]); }
 
+# Regular UIDs
 package Proc::UID::RUID;
 sub TIESCALAR { my $val; return bless \$val, $_[0]; }
 sub FETCH     { return Proc::UID::getruid(); }
@@ -102,5 +102,16 @@ package Proc::UID::EUID;
 sub TIESCALAR { my $val; return bless \$val, $_[0]; }
 sub FETCH     { return Proc::UID::geteuid(); }
 sub STORE     { return Proc::UID::seteuid($_[1]); }
+
+# Regular GIDs
+package Proc::UID::RGID;
+sub TIESCALAR { my $val; return bless \$val, $_[0]; }
+sub FETCH     { return Proc::UID::getrgid(); }
+sub STORE     { return Proc::UID::setrgid($_[1]); }
+
+package Proc::UID::EGID;
+sub TIESCALAR { my $val; return bless \$val, $_[0]; }
+sub FETCH     { return Proc::UID::getegid(); }
+sub STORE     { return Proc::UID::setegid($_[1]); }
 
 1;
