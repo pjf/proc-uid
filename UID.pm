@@ -1,10 +1,10 @@
 =head1 NAME
 
-Secure::UID - Manipulate a variety of UID and GID settings.
+Proc::UID - Manipulate a variety of UID and GID settings.
 
 =head1 SYNOPSIS
 
-	use Secure::UID;
+	use Proc::UID;
 
 =head1 DESCRIPTION
 
@@ -36,14 +36,14 @@ perlsec and perlvar
 
 =cut
 
-package Secure::UID;
+package Proc::UID;
 use strict;
 use warnings;
 use XSLoader;
 
 our $VERSION = 0.01;
 
-XSLoader::load 'Secure::UID';
+XSLoader::load 'Proc::UID';
 
 # These are included for completeness.
 
@@ -70,7 +70,7 @@ eval {
 };
 
 if ($@) {
-	die "Could not load syscall.ph in Secure::UID.\n$@\n";
+	die "Could not load syscall.ph in Proc::UID.\n$@\n";
 }
 
 # Now, if we have syscall loaded, we can see what functions we have

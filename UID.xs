@@ -1,4 +1,4 @@
-/* XSUB bindings for Secure::UID.pm
+/* XSUB bindings for Proc::UID.pm
  *
  * Paul Fenwick	<pjf@cpan.org>
  *
@@ -15,7 +15,7 @@
 /* This current works for Linux, what about other operating systems? */
 #include <unistd.h>
 
-MODULE = Secure::UID  PACKAGE = Secure::UID
+MODULE = Proc::UID  PACKAGE = Proc::UID
 
 PROTOTYPES: DISABLE
 
