@@ -48,7 +48,7 @@ use warnings;
 use XSLoader;
 use Exporter;
 
-our $VERSION = 0.01;
+our $VERSION = 0.02;
 our @ISA = qw(Exporter);
 our @EXPORT_OK = qw(	getruid geteuid getrgid getegid
 			setruid seteuid setrgid setegid
