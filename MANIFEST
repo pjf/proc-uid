@@ -2,6 +2,7 @@ README
 Makefile.PL
 UID.pm
 UID.xs
+t/00_setup.t
 t/01_defined_subs.t
 t/02_user_tests.t
 t/03_root_tests.t
