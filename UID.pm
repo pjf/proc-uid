@@ -96,7 +96,7 @@ $VERSION = 0.02;
 			setruid seteuid setrgid setegid
 			getsuid getsgid
 			setsuid setsgid
-			setuid_permanent
+			drop_priv_temp drop_priv_perm restore_priv
 			$RUID $EUID $RGID $EGID $SUID $SGID);
 
 # Most of our hard work is done in XS.
