@@ -4,7 +4,7 @@ Secure::UID - Manipulate a variety of UID and GID settings.
 
 =head1 SYNOPSIS
 
-	use Secure::UID qw(
+	use Secure::UID;
 
 =head1 DESCRIPTION
 
@@ -39,8 +39,11 @@ perlsec and perlvar
 package Secure::UID;
 use strict;
 use warnings;
+use XSLoader;
 
 our $VERSION = 0.01;
+
+XSLoader::load 'Secure::UID';
 
 # These are included for completeness.
 
