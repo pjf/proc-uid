@@ -8,10 +8,9 @@ use lib 'blib/arch';
 use Test;
 BEGIN {
 	if ($> == 0 or $< == 0) {
-		print "1..0 # Skipped, this file must not run as root.\n";
+		print "1..0 # Skipped, this file must not run directly as root.\n";
 		exit 0;
-	}
-	if ($< == $>) {
+	} elsif ($< == $>) {
 		print "1..0 # Skipped, this file must run setuid.\n";
 		exit 0;
 	}
@@ -29,7 +28,7 @@ ok($<==$RUID,1,'$< is not $RUID');
 ok($>==$EUID,1,'$> is not $EUID');
 ok($<==getruid(),1,'$< and getruid() disagree');
 ok($>==geteuid(),1,'$> and geteuid() disagree');
-ok($SUID,geteuid(),'$SUID and geteuid() are not same at startup.');
+ok($SUID,geteuid(),"\$SUID and geteuid() are not same at startup ($SUID $EUID).");
 
 # Find a gid that we can't change to.
 my $bad_uid = 0;
