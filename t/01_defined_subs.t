@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl -wT
 use strict;
 use Test;
 my @subs_to_test;
@@ -17,6 +17,10 @@ BEGIN {
 	
 	plan tests => @subs_to_test + $EXTRA_TESTS;
 }
+
+# These are for clean-testing with older Perls when using taint.
+use lib "blib/lib";
+use lib "blib/arch";
 
 use Proc::UID;
 

@@ -17,6 +17,10 @@ BEGIN {
 my $TEST_UID = 1000;	# Any non-root UID.
 my $TEST_GID = 1000;
 
+# These are for clean-testing with older Perls when using taint.
+use lib "blib/lib";
+use lib "blib/arch";
+
 use Proc::UID qw(geteuid getruid getsuid
 		 seteuid setruid setsuid
 		 setsgid getsgid

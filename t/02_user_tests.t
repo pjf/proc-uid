@@ -7,6 +7,10 @@ use Test;
 
 BEGIN { plan tests => 17; }
 
+# These are for clean-testing with older Perls when using taint.
+use lib "blib/lib";
+use lib "blib/arch";
+
 use Proc::UID qw(:funcs :vars);
 
 my $TEST_UID = 1000;	# Any non-root UID.
