@@ -7,7 +7,7 @@ use Test;
 
 BEGIN {
 	if ($< == 0 and $> == 0) {
-		plan tests => 16;
+		plan tests => 25;
 	} else {
 		print "1..0 # Skipped, this file must be run as root.\n";
 		exit 0;
@@ -17,7 +17,8 @@ BEGIN {
 my $TEST_UID = 1000;	# Any non-root UID.
 
 use Proc::UID qw(geteuid getruid getsuid
-		 seteuid setruid setsuid);
+		 seteuid setruid setsuid
+		 setuid_permanent);
 
 ok(1);	# Loaded Proc::UID.
 
@@ -45,3 +46,22 @@ ok(eval {setsuid($TEST_UID); "ok"},"ok","Could not set saved UID");
 ok(getsuid(),$TEST_UID,"Saved UID not changed.");
 ok(eval {setsuid(0); "ok"},"ok","Could not reset effective UID");
 ok(getsuid(),0,"Saved UID not reset.");
+
+# 8 tests
+# Finally, drop our privileges permanently, and ensure we can't get
+# them back using a variety of methods.
+
+ok(eval {setuid_permanent($TEST_UID); "ok" },"ok",
+	"Could not drop permanently drop UID.");
+
+# Make sure they appear dropped.
+ok($<,$TEST_UID,"Real UID not dropped according to \$<");
+ok($>,$TEST_UID,"Effective UID not dropped according to \$>");
+ok(geteuid(),$TEST_UID,"Effective UID not dropped according to geteuid()");
+ok(getsuid(),$TEST_UID,"Saved UID not dropped");
+
+$< = 0; ok($<,$TEST_UID,"Managed to restore real UID using \$<");
+$> = 0; ok($>,$TEST_UID,"Managed to restore effective UID using \$>");
+
+eval { setsuid(0); }; ok($@,qr/Could not/,"Invalid setsuid appeared to work");
+ok(getsuid(),$TEST_UID,"Managed to restore saved UID");
