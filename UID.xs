@@ -157,7 +157,7 @@ void
 setsgid(sgid)
 		int sgid;
 	CODE:
-		croak("setsgid cannot run without setresuid, which is not not on this system.");
+		croak("setsgid cannot run without setresgid, which is not not on this system.");
 
 #endif
 
