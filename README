@@ -1,0 +1,7 @@
+Proc::UID
+Paul Fenwick (pjf@cpan.org), May 2004
+
+WARNING:
+
+This module is released for testing and review only.  It should *not*
+be used for manipulating UIDs in any production code.
