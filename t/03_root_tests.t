@@ -7,7 +7,7 @@ use Test;
 
 BEGIN {
 	if ($< == 0 and $> == 0) {
-		plan tests => 25;
+		plan tests => 26;
 	} else {
 		print "1..0 # Skipped, this file must be run as root.\n";
 		exit 0;
@@ -47,7 +47,7 @@ ok(getsuid(),$TEST_UID,"Saved UID not changed.");
 ok(eval {setsuid(0); "ok"},"ok","Could not reset effective UID");
 ok(getsuid(),0,"Saved UID not reset.");
 
-# 8 tests
+# 10 tests
 # Finally, drop our privileges permanently, and ensure we can't get
 # them back using a variety of methods.
 
@@ -58,6 +58,7 @@ ok(eval {setuid_permanent($TEST_UID); "ok" },"ok",
 ok($<,$TEST_UID,"Real UID not dropped according to \$<");
 ok($>,$TEST_UID,"Effective UID not dropped according to \$>");
 ok(geteuid(),$TEST_UID,"Effective UID not dropped according to geteuid()");
+ok(getruid(),$TEST_UID,"Effective UID not dropped according to getruid()");
 ok(getsuid(),$TEST_UID,"Saved UID not dropped");
 
 $< = 0; ok($<,$TEST_UID,"Managed to restore real UID using \$<");
