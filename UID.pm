@@ -40,8 +40,14 @@ package Proc::UID;
 use strict;
 use warnings;
 use XSLoader;
+use Exporter;
 
 our $VERSION = 0.01;
+our @ISA = qw(Exporter);
+our @EXPORT_OK = qw(	getruid geteuid getrgid getegid
+			setruid seteuid setrgid setegid
+			getsuid getsgid
+			setuid_permanent setsuid);
 
 XSLoader::load 'Proc::UID';
 
@@ -78,7 +84,9 @@ if ($@) {
 
 if (*SYS_setresuid{CODE}) {
 	*setsuid = sub { syscall(&SYS_setresuid,-1,-1,$_[0]+0); };
-	*setuid_permanent = sub { syscall(&SYS_setresuid,$_[0]+0,$_[0]+0,$_[0]+0); };
+	*setuid_permanent = sub { 
+		syscall(&SYS_setresuid,$_[0]+0,$_[0]+0,$_[0]+0); 
+	};
 } else {
 	die "Cannot locate SYS_setresuid";
 }
