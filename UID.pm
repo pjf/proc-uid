@@ -78,6 +78,9 @@ These logical operations are based upon the paper
 
 =head2 PREFERRED INTERFACE
 
+The following interface is the preferred method to manipulate
+a the UID/GID of a process.
+
 =over 4
 
 =item B<drop_uid_perm($uid)> and B<drop_gid_perm($gid)>
