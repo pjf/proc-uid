@@ -5,11 +5,13 @@ Proc::UID - Manipulate a variety of UID and GID settings.
 =head1 SYNOPSIS
 
 	use Proc::UID qw(:vars);
-	print "My saved-uid is $SUID, my real-uid is $RUID\n";
+	print "My saved-uid is $SUID, effective-uid is $EUID ",
+	      "my real-uid is $RUID\n";
 
-	use Proc::UID qw(setuid_permanent);
-	print "Permanently dropping privileges to $new_uid\n";
-	drop_priv_perm($new_uid); # Throws an exception on failure.
+	use Proc::UID qw(:funcs);
+	print "Permanently dropping privileges to $new_gid and $new_uid\n";
+	drop_gid_perm($new_gid); # Throws an exception on failure.
+	drop_uid_perm($new_uid); # Throws an exception on failure.
 
 
 =head1 WARNING
@@ -30,7 +32,7 @@ However most modern Unix systems also have a concept of saved UIDs.
 This module provides a consistent and logical interface to real,
 effective, and saved UIDs and GIDs.  It also provides a way to
 permanently drop privileges to that of a given user, a process
-which '$< = $> = $uid' does not guarantee, and the exact syntax
+which C<$<lt> = $<gt> = $uid>' does not guarantee, and the exact syntax
 of which may vary from between operating systems.
 
 Proc::UID is also very pedantic about making sure that operations
@@ -41,6 +43,38 @@ after being changed with low-level system calls.
 
 Proc::UID provides both a variable and function interfaces to
 underlying UIDs.
+
+=head1 DESIGN GOALS
+
+Proc::UID is designed with the following goals in mind:
+
+=over 4
+
+=item The interface should be easy to understand.
+
+The traditional POSIX L<setuid> function is notorious for being difficult
+to understand.  The goal of Proc::UID is to provide an interface that
+is straightforward and easy to understand, and that operates in the
+same fashion regardless of operating system.
+
+=item Mistakes should be difficult to make.
+
+Any code that works with elevated privileges needs to be particularly
+careful with its actions.  It would be a very Bad Thing if a program
+were to continue operating believing it had dropped privileges when it
+had not.
+
+To best achieve this goal, Proc::UID will I<always> check the success of
+any operation requested, and will generate an exception in the case of
+failure.
+
+Proc::UID also provides a set of functions with very clear names
+that allow logical operations (temporarily drop privileges,
+permanently drop privileges, and regain privileges) to be performed.
+These logical operations are based upon the paper
+"Setuid demystified", by Hao Chen, David Wagner, and Drew Dean.
+
+=back
 
 =head2 VARIABLE INTERFACE
 
@@ -54,11 +88,11 @@ underlying UIDs.
 
 =over 4
 
-=item B<drop_priv_temp($uid)>
+=item B<drop_uid_temp($uid)> and B<drop_gid_temp($gid)>
 
-=item B<drop_priv_perm($uid)>
+=item B<drop_uid_perm($uid)> and B<drop_gid_perm($gid)>
 
-=item B<restore_priv()>
+=item B<restore_uid()> and B<restore_gid()>
 
 =back
 
@@ -67,6 +101,10 @@ underlying UIDs.
 Many operating systems have different interfaces into their
 extra UIDs.  This module has not yet been tested under all of
 them.
+
+The current implementation of this module assumes the presence
+of a C<setresuid> call.  This does not exist on all operating
+systems.
 
 =head1 AUTHOR
 
@@ -78,7 +116,9 @@ it under the same terms as Perl itself.
 
 =head1 SEE ALSO
 
-perlsec and perlvar
+L<perlsec> and L<perlvar>
+
+L<Setuid Demystified|http://www.cs.berkeley.edu/~hchen/paper/usenix02.html>
 
 =cut
 
