@@ -7,7 +7,7 @@ use Test;
 
 BEGIN {
 	if ($< == 0 and $> == 0) {
-		plan tests => 26;
+		plan tests => 28;
 	} else {
 		print "1..0 # Skipped, this file must be run as root.\n";
 		exit 0;
@@ -15,9 +15,11 @@ BEGIN {
 }
 
 my $TEST_UID = 1000;	# Any non-root UID.
+my $TEST_GID = 1000;
 
 use Proc::UID qw(geteuid getruid getsuid
 		 seteuid setruid setsuid
+		 setsgid getsgid
 		 setuid_permanent);
 
 ok(1);	# Loaded Proc::UID.
@@ -46,6 +48,12 @@ ok(eval {setsuid($TEST_UID); "ok"},"ok","Could not set saved UID");
 ok(getsuid(),$TEST_UID,"Saved UID not changed.");
 ok(eval {setsuid(0); "ok"},"ok","Could not reset effective UID");
 ok(getsuid(),0,"Saved UID not reset.");
+
+# 2 tests
+# A few tests for our saved gids.
+
+ok(eval {setsgid($TEST_GID); "ok"},"ok","Could not set saved GID");
+ok(getsgid(),$TEST_GID,"Saved GID not saved");
 
 # 10 tests
 # Finally, drop our privileges permanently, and ensure we can't get

@@ -10,7 +10,7 @@ BEGIN {
 		getruid geteuid getrgid getegid
 		setruid seteuid setrgid setegid
 		getsuid getsgid
-		setsuid
+		setsuid setsgid
 		setuid_permanent
 	);
 	

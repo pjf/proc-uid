@@ -80,6 +80,8 @@ getsgid()
 	OUTPUT:
 		RETVAL
 
+# Set our saved UID.
+
 void
 setsuid(suid)
 		int suid;
@@ -87,6 +89,17 @@ setsuid(suid)
 		if (setresuid(-1,-1,suid) == -1) {
 			croak("Could not set saved UID");
 		}
+
+# Set our saved GID.
+void
+setsgid(sgid)
+		int sgid;
+	CODE:
+		if (setresgid(-1,-1,sgid) == -1) {
+			croak("Could not set saved GID");
+		}
+
+# Set all of our UIDs.
 
 void
 setuid_permanent(uid)

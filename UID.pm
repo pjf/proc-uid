@@ -53,7 +53,8 @@ our @ISA = qw(Exporter);
 our @EXPORT_OK = qw(	getruid geteuid getrgid getegid
 			setruid seteuid setrgid setegid
 			getsuid getsgid
-			setuid_permanent setsuid);
+			setsuid setsgid
+			setuid_permanent);
 
 XSLoader::load 'Proc::UID';
 
