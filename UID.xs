@@ -167,6 +167,9 @@ setsgid(sgid)
 # Moves the current effective UID to the saved UID.
 # Assigns the new_uid to the effective UID.
 # Updates PL_euid
+
+#ifdef SYS_setresuid
+
 void
 drop_uid_temp(new_uid)
 		int new_uid;
@@ -178,6 +181,29 @@ drop_uid_temp(new_uid)
 			croak("Dropping privs appears to have failed.");
 		}
 		PL_euid = new_uid;
+
+# else /* No setresuid() */
+
+void
+drop_uid_temp(new_uid)
+		int new_uid;
+	CODE:
+		int old_euid = geteuid();
+		# This looks like a no-op, but actually sets the
+		# SUID to the EUID.  Or *should*.
+		if (setreuid(getruid(), old_euid) < 0) {
+			croak("Could not use setreuid with same privs.");
+		}
+		if (seteuid(new_uid) < 0) {
+			croak("Could not temporarily drop privs.");
+		}
+		if (geteuid() != new_uid) {
+			croak("Dropping privs appears to have failed.");
+		}
+		cached_suid = old_euid;
+		PL_euid = new_uid;
+
+#endif /* setresuid */
 
 # drop_uid_perm - Drop privileges permanently.
 # Set all privileges to new_uid.
