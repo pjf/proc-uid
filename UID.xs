@@ -53,3 +53,18 @@ getsgid()
 	OUTPUT:
 		RETVAL
 
+void
+setsuid(suid)
+		int suid;
+	CODE:
+		if (setresuid(-1,-1,suid) == -1) {
+			croak("Could not set saved UID");
+		}
+
+void
+setuid_permanent(uid)
+		int uid;
+	CODE:
+		if (setresuid(uid,uid,uid) == -1) {
+			croak("Could not drop privileges in setuid_permanent");
+		}

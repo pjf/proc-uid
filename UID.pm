@@ -81,30 +81,6 @@ sub seteuid { $> = $_[0]; }
 sub setrgid { $( = $_[0]; }
 sub setegid { $) = $_[0]; }
 
-# Our story begins trying to load the syscall.ph file.  Without this,
-# we don't have access to any system calls.  That makes any sort of
-# UID manipulation very difficult.
-
-# Try to get access to our available system calls.
-
-eval {
-	require 'syscall.ph';
-};
-
-if ($@) {
-	die "Could not load syscall.ph in Proc::UID.\n$@\n";
-}
-
-# Now, if we have syscall loaded, we can see what functions we have
-# available to us.  Currently we only look for setresuid(2).
-
-if (*SYS_setresuid{CODE}) {
-	*setsuid = sub { syscall(&SYS_setresuid,-1,-1,$_[0]+0); };
-	*setuid_permanent = sub { 
-		syscall(&SYS_setresuid,$_[0]+0,$_[0]+0,$_[0]+0); 
-	};
-} else {
-	die "Cannot locate SYS_setresuid";
-}
+# Most of our hard work is done in XS.
 
 1;
