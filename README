@@ -5,3 +5,23 @@ WARNING:
 
 This module is released for testing and review only.  It should *not*
 be used for manipulating UIDs in any production code.
+
+TESTING:
+
+The tests in this module are designed so that they can all be run
+if 'make test' is done with root privileges.  If you find that most
+of your tests are skipped, please become root and try 'make test'
+again.
+
+If you would like to assist in providing feedback on the testing of
+this module, please send the results of 'make test' and 'perl -V' to
+proc-uid-test@perltraining.com.au.
+
+If you have Mail::Send installed on your system, then the
+"sendtests" file probably does all this work for you.  You can
+invoke it with:
+
+	./sendtests
+
+It will give you a chance to read the information it is about to 
+send before sending.

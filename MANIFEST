@@ -1,4 +1,5 @@
 README
+sendtests
 Makefile.PL
 UID.pm
 UID.xs
