@@ -67,13 +67,6 @@ if ($@ or ! *tainted{CODE}) {
 	}
 }
 
-# These are included for completeness.
-
-sub getruid { return $< };
-sub geteuid { return $> };
-sub getrgid { return $( };
-sub getegid { return $) };
-
 # These *should* be expanded to actually check the operation succeeded.
 
 sub setruid { $< = $_[0]; }

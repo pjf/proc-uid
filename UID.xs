@@ -19,7 +19,34 @@ MODULE = Proc::UID  PACKAGE = Proc::UID
 
 PROTOTYPES: DISABLE
 
-# Get our saved UID
+# Low-level calls to get our privileges.
+# These *should* always return the same as $< and $>, $( and $)
+
+int geteuid()
+	CODE:
+		RETVAL = geteuid();
+	OUTPUT:
+		RETVAL
+
+int getruid()
+	CODE:
+		RETVAL = getuid();
+	OUTPUT:
+		RETVAL
+
+int getegid()
+	CODE:
+		RETVAL = getegid();
+	OUTPUT:
+		RETVAL
+
+int getrgid()
+	CODE:
+		RETVAL = getgid();
+	OUTPUT:
+		RETVAL
+
+# Get our saved UID/GID
 
 int
 getsuid()
