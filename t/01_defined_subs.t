@@ -9,8 +9,8 @@ BEGIN {
 	@subs_to_test= qw(
 		getruid geteuid getrgid getegid
 		setruid seteuid setrgid setegid
-		getsuid getsgid
-		setsuid setsgid
+		getsuid getsgid setsuid setsgid
+		suid_is_cached
 		drop_uid_temp drop_uid_perm restore_uid
 		drop_gid_temp drop_gid_perm restore_gid
 	);

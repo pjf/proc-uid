@@ -65,6 +65,12 @@ int getrgid()
 
 #ifdef SYS_getresuid
 
+int suid_is_cached()
+	CODE:
+		RETVAL = 0;
+	OUTPUT:
+		RETVAL
+
 int
 getsuid()
 	PREINIT:
@@ -73,7 +79,7 @@ getsuid()
 	CODE:
 		ret = getresuid(&ruid, &euid, &suid);
 		if (ret == -1) {
-			RETVAL = -1;
+			croak("getresuid() returned failure.  Error in Proc::UID?");
 		} else {
 			RETVAL = suid;
 		}
@@ -90,7 +96,7 @@ getsgid()
 	CODE:
 		ret = getresgid(&rgid, &egid, &sgid);
 		if (ret == -1) {
-			RETVAL = -1;
+			croak("getresgid() returned failure.  Error in Proc::UID?");
 		} else {
 			RETVAL = sgid;
 		}
@@ -101,6 +107,12 @@ getsgid()
 
 # This records our saved privileges upon startup.  Yes, this is
 # is caching.  I wish there were a better way.
+
+int suid_is_cached()
+	CODE:
+		RETVAL = 1;
+	OUTPUT:
+		RETVAL
 
 void
 init()
@@ -269,6 +281,8 @@ restore_uid()
 
 # Now let's do the same for gid functions.
 # TODO - Think about getgroups / setgroups, how do they best fit in?
+
+# XXX - These need to be fixed for resuid/non-resuid systems.
 
 void
 drop_gid_temp(new_gid)

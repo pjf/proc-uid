@@ -13,6 +13,7 @@ Proc::UID - Manipulate a variety of UID and GID settings.
 	drop_gid_perm($new_gid); # Throws an exception on failure.
 	drop_uid_perm($new_uid); # Throws an exception on failure.
 
+	print "Saved-UIDs are cached\n" if suid_is_cached();
 
 =head1 WARNING
 
@@ -185,7 +186,11 @@ it under the same terms as Perl itself.
 
 =head1 TESTING STRATEGY
 
-Proc::UID's testing strategy is designed to be very complete.
+Proc::UID's testing strategy is designed to be very complete.  Should
+any tests fail when building Proc::UID on your system, then it is
+recommended that you do not use Proc::UID.
+
+For complete testing, Proc::UID's tests need to run as root.
 
 =head1 SEE ALSO
 
@@ -208,8 +213,8 @@ $VERSION = 0.04;
 @ISA = qw(Exporter);
 @EXPORT_OK = qw(	getruid geteuid getrgid getegid
 			setruid seteuid setrgid setegid
-			getsuid getsgid
-			setsuid setsgid
+			getsuid getsgid setsuid setsgid
+			suid_is_cached
 			drop_uid_temp drop_uid_perm restore_uid
 			drop_gid_temp drop_gid_perm restore_gid
 			$RUID $EUID $RGID $EGID $SUID $SGID);
@@ -219,6 +224,7 @@ $VERSION = 0.04;
 	funcs => [qw(	getruid geteuid getrgid getegid
 			setruid seteuid setrgid setegid
 			getsuid getsgid setsuid setsgid
+			suid_is_cached
 			drop_uid_temp drop_uid_perm restore_uid
 			drop_gid_temp drop_gid_perm restore_gid
 	)],

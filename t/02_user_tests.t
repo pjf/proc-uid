@@ -46,9 +46,18 @@ if ($EUID == 0) {
 
 eval {$EUID = 0;}; ok($@,qr/./,"Unexpectedly set EUID = 0");	#12
 eval {$RUID = 0;}; ok($@,qr/./,"Unexpectedly set RUID = 0");	#13
-eval {$SUID = 0;}; ok($@,qr/./,"Unexpectedly set SUID = 0");	#14
+
+if (suid_is_cached()) {
+	skip("Cannot set saved-UID directly on this system",1);		#14
+} else {
+	eval {$SUID = 0;}; ok($@,qr/./,"Unexpectedly set SUID = 0");	#14
+}
 
 eval {$EGID = 0;}; ok($@,qr/./,"Unexpectedly set EGID = 0");	#15
 eval {$RGID = 0;}; ok($@,qr/./,"Unexpectedly set RGID = 0");	#16
-eval {$SGID = 0;}; ok($@,qr/./,"Unexpectedly set SGID = 0");	#17
 
+if (suid_is_cached()) {
+	skip("Cannot set saved-GID correctly on this system",1);
+} else {
+	eval {$SGID = 0;}; ok($@,qr/./,"Unexpectedly set SGID = 0");	#17
+}
