@@ -50,7 +50,7 @@ my $test_results = `make test`;
 
 my $as_root = ($> == 0) ? "as root" : "as user";
 
-my $SUBJECT = "Subject: Proc::UID $VERSION ($^O, perl $]) $as_root";
+my $SUBJECT = "[Proc::UID Test] Proc::UID $VERSION ($^O, perl $]) $as_root";
 
 unless ($YES_SEND) {
 
@@ -64,7 +64,7 @@ unless ($YES_SEND) {
 
 	print PAGER "The following will be sent to $MAIL_TEST_TO :\n\n\n\n\n";
 
-	print PAGER	"$SUBJECT\n\n",
+	print PAGER	"Subject: $SUBJECT\n\n",
 			"$perl_info\n\n",
 			"$test_results\n\n";
 
