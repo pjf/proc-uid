@@ -200,7 +200,7 @@ use Carp;
 use vars qw/$VERSION @ISA @EXPORT_OK $SUID $SGID $EUID $RUID $EGID $RGID
 	    %EXPORT_TAGS/;
 
-$VERSION = 0.03;
+$VERSION = 0.04;
 @ISA = qw(Exporter);
 @EXPORT_OK = qw(	getruid geteuid getrgid getegid
 			setruid seteuid setrgid setegid

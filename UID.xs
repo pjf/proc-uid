@@ -10,6 +10,10 @@
 
 /* TODO: Everything here uses type 'int' when it should use type
  * 'uid_t'.  On most systems they're the same, but we should not assume.
+ *
+ * However, XS _wants_ ints to be returned, since it knows how to deal with
+ * them.  Can we trust the compiler to do the right thing with type
+ * conversion?
  */
 
 #include "EXTERN.h"
@@ -18,6 +22,13 @@
 
 /* This current works for Linux, what about other operating systems? */
 #include <unistd.h>
+#include <sys/types.h>
+#include <sys/syscall.h>
+
+#ifndef SYS_getresuid
+	uid_t cached_suid;
+	uid_t cached_sgid;
+#endif
 
 MODULE = Proc::UID  PACKAGE = Proc::UID
 
@@ -52,6 +63,8 @@ int getrgid()
 
 # Get our saved UID/GID
 
+#ifdef SYS_getresuid
+
 int
 getsuid()
 	PREINIT:
@@ -84,7 +97,36 @@ getsgid()
 	OUTPUT:
 		RETVAL
 
+#else
+
+# This records our saved privileges upon startup.  Yes, this is
+# is caching.  I wish there were a better way.
+
+void
+init()
+	CODE:
+		cached_suid = geteuid();
+		cached_sgid = getegid();
+
+int
+getsuid()
+	CODE:
+		RETVAL = cached_suid;
+	OUTPUT:
+		RETVAL
+
+int
+getsgid()
+	CODE:
+		RETVAL = cached_sgid;
+	OUTPUT:
+		RETVAL
+
+#endif
+
 # Set our saved UID.
+
+#ifdef SYS_setresuid
 
 void
 setsuid(suid)
@@ -102,6 +144,22 @@ setsgid(sgid)
 		if (setresgid(-1,-1,sgid) == -1) {
 			croak("Could not set saved GID");
 		}
+
+#else
+
+void
+setsuid(suid)
+		int suid;
+	CODE:
+		croak("setsuid cannot run without setresuid, which is not on this system.");
+
+void
+setsgid(sgid)
+		int sgid;
+	CODE:
+		croak("setsgid cannot run without setresuid, which is not not on this system.");
+
+#endif
 
 # Preferred calls.
 
