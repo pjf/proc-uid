@@ -5,3 +5,7 @@ UID.xs
 t/01_defined_subs.t
 t/02_user_tests.t
 t/03_root_tests.t
+t/04_suid_tests.t
+t/04_suid_tests.t2
+t/05_sgid_tests.t
+t/05_sgid_tests.t2
