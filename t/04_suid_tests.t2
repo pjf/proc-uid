@@ -7,7 +7,7 @@ use lib 'blib/arch';
 
 use Test;
 BEGIN {
-	if ($> == 0) {
+	if ($> == 0 or $< == 0) {
 		print "1..0 # Skipped, this file must not run as root.\n";
 		exit 0;
 	}
