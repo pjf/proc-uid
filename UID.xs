@@ -214,6 +214,7 @@ drop_uid_perm(new_uid)
 	PREINIT:
 		int ruid, euid, suid;
 	CODE:
+#ifdef SYS_setresuid
 		if (setresuid(new_uid,new_uid,new_uid) < 0) {
 			croak("Could not permanently drop privs.");
 		}
@@ -223,6 +224,21 @@ drop_uid_perm(new_uid)
 		if (ruid != new_uid || euid != new_uid || suid != new_uid) {
 			croak("Failed to drop privileges.");
 		}
+#else
+		if (setreuid(new_uid, new_uid) < 0) {
+			croak("Could not permanently drop privs.");
+		}
+
+		# Having a way to read the SUID would be great,
+		# but depends upon the O/S.
+		# XXX - For the moment we just assume this works for SUID
+
+		if (getruid() != new_uid || geteuid() != new_uid) {
+			croak("Failed to drop privileges.");
+		}
+
+		cached_suid = new_uid;
+#endif
 		PL_uid  = new_uid;
 		PL_euid = new_uid;
 
@@ -231,6 +247,7 @@ restore_uid()
 	PREINIT:
 		int ruid, euid, suid;
 	CODE:
+#ifdef SYS_setresuid
 		if (getresuid(&ruid, &euid, &suid) < 0) {
 			croak("Could not verify privileges.");
 		}
@@ -240,6 +257,14 @@ restore_uid()
 		if (geteuid() != suid) {
 			croak("Failed to set effective UID.");
 		}
+#else
+		if (seteuid(cached_suid) < 0) {
+			croak("Could not set effective UID.");
+		}
+		if (geteuid() != cached_suid) {
+			croak("Failed to set effective UID.");
+		}
+#endif
 		PL_euid = suid;
 
 # Now let's do the same for gid functions.

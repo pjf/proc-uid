@@ -183,6 +183,10 @@ Copyright (c) 2004 Paul Fenwick.  All rights reserved.  This
 program is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
 
+=head1 TESTING STRATEGY
+
+Proc::UID's testing strategy is designed to be very complete.
+
 =head1 SEE ALSO
 
 L<perlsec> and L<perlvar>
@@ -211,14 +215,13 @@ $VERSION = 0.04;
 			$RUID $EUID $RGID $EGID $SUID $SGID);
 
 %EXPORT_TAGS = (
-	vars  => qw($RUID $EUID $RGID $EGID $SUID $SGID),
-	funcs => qw(getruid geteguid getrgid getegid
+	vars  => [qw(	$RUID $EUID $RGID $EGID $SUID $SGID)],
+	funcs => [qw(	getruid geteuid getrgid getegid
 			setruid seteuid setrgid setegid
-			getsuid getsgid
-			setsuid setsgid
+			getsuid getsgid setsuid setsgid
 			drop_uid_temp drop_uid_perm restore_uid
 			drop_gid_temp drop_gid_perm restore_gid
-	),
+	)],
 );
 
 # Most of our hard work is done in XS.

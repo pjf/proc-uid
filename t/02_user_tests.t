@@ -5,26 +5,50 @@ use Test;
 # These tests are to ensure that Proc::UID's provide sane results.
 # These do not assume any special privileges.
 
-BEGIN { plan tests => 10; }
+BEGIN { plan tests => 17; }
 
-use Proc::UID qw(geteuid getruid getsuid getsgid getrgid getegid
-		 $SUID $SGID $RUID $RGID $EUID $EGID);
+use Proc::UID qw(:funcs :vars);
 
-ok(1);	# Loaded Proc::UID.
+my $TEST_UID = 1000;	# Any non-root UID.
+
+ok(1);	# Loaded Proc::UID.						#1
 
 # These make sure that our functions agree with our variables.
 
-ok(geteuid(),$>,"geteuid not the same as \$>");
-ok(getruid(),$<,"getruid not the same as \$<");
-ok(getsuid(),$>,"getsuid not the same as original \$>");
+ok(geteuid(),$>,"geteuid not the same as \$>");				#2
+ok(getruid(),$<,"getruid not the same as \$<");				#3
+ok(getsuid(),$>,"getsuid not the same as original \$>");		#4
 
 # Make sure our variables look sensible.
 
-ok($SUID,getsuid(),"\$SUID and getsuid() do not match\n");
-ok($SGID,getsgid(),"\$SGID and getsgid() do not match\n");
+ok($SUID,getsuid(),"\$SUID and getsuid() do not match");		#5
+ok($SGID,getsgid(),"\$SGID and getsgid() do not match");		#6
 
-ok($RUID,getruid(),"\$RUID and getruid() do not match\n");
-ok($RGID,getrgid(),"\$RGID and getrgid() do not match\n");
+ok($RUID,getruid(),"\$RUID and getruid() do not match");		#7
+ok($RGID,getrgid(),"\$RGID and getrgid() do not match");		#8
 
-ok($EUID,geteuid(),"\$EUID and geteuid() do not match\n");
-ok($EGID,getegid(),"\$EGID and getegid() do not match\n");
+ok($EUID,geteuid(),"\$EUID and geteuid() do not match");		#9
+ok($EGID,getegid(),"\$EGID and getegid() do not match");		#10
+
+# We should never be able to change our UID or GID to anything
+# else.  If we're root, we should drop our privileges first.
+
+if ($EUID == 0) {
+	eval {drop_uid_perm($TEST_UID);};
+	if ($@) {
+		ok(0,undef,"Dropping root privileges failed");	#11
+	} else {
+		ok(1);						#11
+	}
+} else {
+	skip("Running as non-root, no need to drop privileges",1);#11
+}
+
+eval {$EUID = 0;}; ok($@,qr/./,"Unexpectedly set EUID = 0");	#12
+eval {$RUID = 0;}; ok($@,qr/./,"Unexpectedly set RUID = 0");	#13
+eval {$SUID = 0;}; ok($@,qr/./,"Unexpectedly set SUID = 0");	#14
+
+eval {$EGID = 0;}; ok($@,qr/./,"Unexpectedly set EGID = 0");	#15
+eval {$RGID = 0;}; ok($@,qr/./,"Unexpectedly set RGID = 0");	#16
+eval {$SGID = 0;}; ok($@,qr/./,"Unexpectedly set SGID = 0");	#17
+
