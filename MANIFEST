@@ -1,3 +1,4 @@
 Makefile.PL
 UID.pm
+UID.xs
 t/01_defined_subs.t
