@@ -9,7 +9,7 @@ Proc::UID - Manipulate a variety of UID and GID settings.
 	      "my real-uid is $RUID\n";
 
 	use Proc::UID qw(:funcs);
-	print "Permanently dropping privileges to $new_gid and $new_uid\n";
+	print "Permanently dropping privs to $new_gid and $new_uid\n";
 	drop_gid_perm($new_gid); # Throws an exception on failure.
 	drop_uid_perm($new_uid); # Throws an exception on failure.
 
@@ -194,7 +194,8 @@ use warnings;
 use XSLoader;
 use Exporter;
 use Carp;
-use vars qw/$VERSION @ISA @EXPORT_OK $SUID $SGID $EUID $RUID $EGID $RGID/;
+use vars qw/$VERSION @ISA @EXPORT_OK $SUID $SGID $EUID $RUID $EGID $RGID
+	    %EXPORT_TAGS/;
 
 $VERSION = 0.02;
 @ISA = qw(Exporter);
@@ -205,6 +206,17 @@ $VERSION = 0.02;
 			drop_uid_temp drop_uid_perm restore_uid
 			drop_gid_temp drop_gid_perm restore_gid
 			$RUID $EUID $RGID $EGID $SUID $SGID);
+
+%EXPORT_TAGS = (
+	vars  => qw($RUID $EUID $RGID $EGID $SUID $SGID),
+	funcs => qw(getruid geteguid getrgid getegid
+			setruid seteuid setrgid setegid
+			getsuid getsgid
+			setsuid setsgid
+			drop_uid_temp drop_uid_perm restore_uid
+			drop_gid_temp drop_gid_perm restore_gid
+	),
+);
 
 # Most of our hard work is done in XS.
 XSLoader::load 'Proc::UID';
