@@ -1,3 +1,3 @@
 Makefile.PL
-lib/Secure/UID.pm
+UID.pm
 t/01_defined_subs.t

@@ -7,5 +7,5 @@ use strict;
 use ExtUtils::MakeMaker;
 
 WriteMakefile( NAME         => "Secure::UID",
-               VERSION_FROM => "lib/Secure/UID.pm"
+               VERSION_FROM => "UID.pm"
              );
