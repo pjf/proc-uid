@@ -11,7 +11,7 @@ BEGIN {
 		setruid seteuid setrgid setegid
 		getsuid getsgid
 		setsuid setsgid
-		setuid_permanent
+		drop_priv_temp drop_priv_perm restore_priv
 	);
 	
 	plan tests => @subs_to_test + $EXTRA_TESTS;

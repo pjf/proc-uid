@@ -8,6 +8,10 @@
  *
  */
 
+/* TODO: Everything here uses type 'int' when it should use type
+ * 'uid_t'.  On most systems they're the same, but we should not assume.
+ */
+
 #include "EXTERN.h"
 #include "perl.h"
 #include "XSUB.h"
@@ -99,16 +103,58 @@ setsgid(sgid)
 			croak("Could not set saved GID");
 		}
 
-# Set all of our UIDs.
+# Preferred calls.
+
+# drop_priv_temp - Drop privileges temporarily.
+# Moves the current effective UID to the saved UID.
+# Assigns the new_uid to the effective UID.
+# Updates PL_euid
+void
+drop_priv_temp(new_uid)
+		int new_uid;
+	CODE:
+		if (setresuid(-1,new_uid,geteuid()) < 0) {
+			croak("Could not temporarily drop privs.");
+		}
+		if (geteuid() != new_uid) {
+			croak("Dropping privs appears to have failed.");
+		}
+		PL_euid = new_uid;
+
+# drop_priv_perm - Drop privileges permanently.
+# Set all privileges to new_uid.
+# Updates PL_uid and PL_euid
+void
+drop_priv_perm(new_uid)
+		int new_uid;
+	PREINIT:
+		int ruid, euid, suid;
+	CODE:
+		if (setresuid(new_uid,new_uid,new_uid) < 0) {
+			croak("Could not permanently drop privs.");
+		}
+		if (getresuid(&ruid, &euid, &suid) < 0) {
+			croak("Could not check privileges were dropped.");
+		}
+		if (ruid != new_uid || euid != new_uid || suid != new_uid) {
+			croak("Failed to drop privileges.");
+		}
+		PL_uid  = new_uid;
+		PL_euid = new_uid;
 
 void
-setuid_permanent(uid)
-		int uid;
+restore_priv(void)
+	PREINIT:
+		int ruid, euid, suid;
 	CODE:
-		if (setresuid(uid,uid,uid) == -1) {
-			croak("Could not drop privileges in setuid_permanent");
+		if (getresuid(&ruid, &euid, &suid) < 0) {
+			croak("Could not verify privileges.");
 		}
-		# If we don't update Perl's special variables directly,
-		# then Perl doesn't believe we've changed UIDs.  Oh dear!
-		PL_uid = uid;
-		PL_euid = uid;
+		if (setresuid(-1,suid,-1) < 0) {
+			croak("Could not set effective UID.");
+		}
+		if (geteuid() != suid) {
+			croak("Failed to set effective UID.");
+		}
+		PL_euid = suid;
+
