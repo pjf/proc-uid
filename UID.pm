@@ -32,10 +32,10 @@ However most modern Unix systems also have a concept of saved UIDs.
 This module provides a consistent and logical interface to real,
 effective, and saved UIDs and GIDs.  It also provides a way to
 permanently drop privileges to that of a given user, a process
-which C<$<lt> = $<gt> = $uid>' does not guarantee, and the exact syntax
+which C<$<lt> = $E<gt> = $uid>' does not guarantee, and the exact syntax
 of which may vary from between operating systems.
 
-Proc::UID is also very pedantic about making sure that operations
+C<Proc::UID> is also very pedantic about making sure that operations
 succeeded, and checking the value which it returns for a UID/GID
 really is the one that's being used.  Perl may sometimes cache
 the values of $<, $>, $( and $), which means they can be wrong
@@ -76,23 +76,85 @@ These logical operations are based upon the paper
 
 =back
 
-=head2 VARIABLE INTERFACE
-
-	To be compelted.
-
-=head2 FUNCTIONAL INTERFACE
-
-	To be completed.
-
 =head2 PREFERRED INTERFACE
 
 =over 4
 
-=item B<drop_uid_temp($uid)> and B<drop_gid_temp($gid)>
-
 =item B<drop_uid_perm($uid)> and B<drop_gid_perm($gid)>
 
+The C<drop_uid_perm> and C<drop_gid_perm> functions allow a program
+to permanently drop its privileges to the given $uid or $gid.
+It guarantees that the real, effective and saved uid/gid will be
+set to the argument supplied.
+
+If C<drop_uid_perm> or C<drop_gid_perm> cannot drop privileges, then
+it will throw an exception.
+
+=item B<drop_uid_temp($uid)> and B<drop_gid_temp($gid)>
+
+These functions will allow privileges to be dropped in a temporary
+fashion.  They have the effect of setting the effective uid to the
+supplied argument, and the saved uid to the previous effective uid.
+The real uid is not changed.
+
+If privileges cannot be dropped, then the function will throw an
+exception.
+
 =item B<restore_uid()> and B<restore_gid()>
+
+These functions will allow you to restore a privilege previously
+dropped using C<drop_uid_temp> or C<drop_gid_temp>.  It is equivilent
+to setting the effective uid/gid to the saved uid/gid.
+
+=back
+
+=head2 VARIABLE INTERFACE
+
+If Proc::UID is called with the C<:vars> parameter, the following
+variables will be made available:
+
+=over 4
+
+=item B<$EUID>
+
+This is the effective UID of the process.  It is nominally the same
+as $>.  However reading C<$EUID> I<always> results in the effective
+UID of the process being read.  Setting C<$EUID> will result in an exception
+being thrown if it does not succeed.
+
+=item B<$RUID>
+
+As above, but for the real UID.  Nominally the same as $<.
+
+=item B<$SUID>
+
+As above, but for the saved UID.  There is no equivilent special
+variable in Perl.
+
+=back
+
+=head2 FUNCTIONAL INTERFACE
+
+=over 4
+
+=item B<geteuid()> / B<getegid()>
+
+=item B<getruid()> / B<getrgid()>
+
+=item B<getsuid()> / B<getsuid()>
+
+Return the effective, real, or saved user-id/group-id respectively.
+These functions will always make a system call to get the current
+value.
+
+=item B<seteuid($uid)> / B<setegid($gid)>
+
+=item B<setruid($uid)> / B<setrgid($gid)>
+
+=item B<setsuid($uid)> / B<setsgid($gid)>
+
+Set the effective, real, or saved user-id/group-id respectively.
+If the operation fails, an exception will be thrown.
 
 =back
 
@@ -105,6 +167,10 @@ them.
 The current implementation of this module assumes the presence
 of a C<setresuid> call.  This does not exist on all operating
 systems.
+
+The module does not manipulate or make available access to any
+other operating-system-specific privileges, such as the filesystem
+UID under Linux.
 
 =head1 AUTHOR
 
@@ -136,7 +202,8 @@ $VERSION = 0.02;
 			setruid seteuid setrgid setegid
 			getsuid getsgid
 			setsuid setsgid
-			drop_priv_temp drop_priv_perm restore_priv
+			drop_uid_temp drop_uid_perm restore_uid
+			drop_gid_temp drop_gid_perm restore_gid
 			$RUID $EUID $RGID $EGID $SUID $SGID);
 
 # Most of our hard work is done in XS.

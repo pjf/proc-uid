@@ -7,7 +7,7 @@ use Test;
 
 BEGIN {
 	if ($< == 0 and $> == 0) {
-		plan tests => 28;
+		plan tests => 36;
 	} else {
 		print "1..0 # Skipped, this file must be run as root.\n";
 		exit 0;
@@ -20,7 +20,8 @@ my $TEST_GID = 1000;
 use Proc::UID qw(geteuid getruid getsuid
 		 seteuid setruid setsuid
 		 setsgid getsgid
-		 setuid_permanent);
+		 $EUID $RUID $SUID
+		 drop_uid_perm drop_uid_temp restore_uid);
 
 ok(1);	# Loaded Proc::UID.
 
@@ -55,12 +56,25 @@ ok(getsuid(),0,"Saved UID not reset.");
 ok(eval {setsgid($TEST_GID); "ok"},"ok","Could not set saved GID");
 ok(getsgid(),$TEST_GID,"Saved GID not saved");
 
+# 8 tests right now.
+# Drop our UID temporarily and regain it.
+ok(eval {drop_uid_temp($TEST_UID); "ok" },"ok","Could not drop_uid_temp - $@");
+ok($>,$TEST_UID,'$> is not $TEST_UID');
+ok(geteuid(),$TEST_UID,'geteuid() does not return $TEST_UID');
+ok($EUID,$TEST_UID,'$EUID does not match $TEST_UID');
+
+ok(eval {restore_uid(); "ok"}, "ok", "Could not restore_uid - $@");
+ok($>,0,q{$> does not think we've restored privs.});
+ok($EUID,0,q{$EUID does not think we've restored privs.});
+ok(geteuid,0,q{geteuid() does not think we've restored privs.});
+# Add more tests!
+
 # 10 tests
 # Finally, drop our privileges permanently, and ensure we can't get
 # them back using a variety of methods.
 
-ok(eval {setuid_permanent($TEST_UID); "ok" },"ok",
-	"Could not drop permanently drop UID.");
+ok(eval {drop_uid_perm($TEST_UID); "ok" },"ok",
+	"Could not drop permanently drop UID. - $@");
 
 # Make sure they appear dropped.
 ok($<,$TEST_UID,"Real UID not dropped according to \$<");

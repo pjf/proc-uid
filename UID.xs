@@ -105,12 +105,12 @@ setsgid(sgid)
 
 # Preferred calls.
 
-# drop_priv_temp - Drop privileges temporarily.
+# drop_uid_temp - Drop privileges temporarily.
 # Moves the current effective UID to the saved UID.
 # Assigns the new_uid to the effective UID.
 # Updates PL_euid
 void
-drop_priv_temp(new_uid)
+drop_uid_temp(new_uid)
 		int new_uid;
 	CODE:
 		if (setresuid(-1,new_uid,geteuid()) < 0) {
@@ -121,11 +121,11 @@ drop_priv_temp(new_uid)
 		}
 		PL_euid = new_uid;
 
-# drop_priv_perm - Drop privileges permanently.
+# drop_uid_perm - Drop privileges permanently.
 # Set all privileges to new_uid.
 # Updates PL_uid and PL_euid
 void
-drop_priv_perm(new_uid)
+drop_uid_perm(new_uid)
 		int new_uid;
 	PREINIT:
 		int ruid, euid, suid;
@@ -143,7 +143,7 @@ drop_priv_perm(new_uid)
 		PL_euid = new_uid;
 
 void
-restore_priv(void)
+restore_uid()
 	PREINIT:
 		int ruid, euid, suid;
 	CODE:
@@ -157,4 +157,54 @@ restore_priv(void)
 			croak("Failed to set effective UID.");
 		}
 		PL_euid = suid;
+
+# Now let's do the same for gid functions.
+# TODO - Think about getgroups / setgroups, how do they best fit in?
+
+void
+drop_gid_temp(new_gid)
+		int new_gid;
+	CODE:
+		if (setresgid(-1,new_gid,getegid()) < 0) {
+			croak("Could not temporarily drop privs.");
+		}
+		if (getegid() != new_gid) {
+			croak("Dropping privs appears to have failed.");
+		}
+		PL_egid = new_gid;
+
+
+void
+drop_gid_perm(new_gid)
+		int new_gid;
+	PREINIT:
+		int rgid, egid, sgid;
+	CODE:
+		if (setresgid(new_gid,new_gid,new_gid) < 0) {
+			croak("Could not permanently drop privs.");
+		}
+		if (getresgid(&rgid, &egid, &sgid) < 0) {
+			croak("Could not check privileges were dropped.");
+		}
+		if (rgid != new_gid || egid != new_gid || sgid != new_gid) {
+			croak("Failed to drop privileges.");
+		}
+		PL_gid  = new_gid;
+		PL_egid = new_gid;
+
+void
+restore_gid()
+	PREINIT:
+		int rgid, egid, sgid;
+	CODE:
+		if (getresgid(&rgid, &egid, &sgid) < 0) {
+			croak("Could not verify privileges.");
+		}
+		if (setresgid(-1,sgid,-1) < 0) {
+			croak("Could not set effective GID.");
+		}
+		if (getegid() != sgid) {
+			croak("Failed to set effective GID.");
+		}
+		PL_egid = sgid;
 
