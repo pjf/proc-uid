@@ -32,7 +32,7 @@ However most modern Unix systems also have a concept of saved UIDs.
 This module provides a consistent and logical interface to real,
 effective, and saved UIDs and GIDs.  It also provides a way to
 permanently drop privileges to that of a given user, a process
-which C<$<lt> = $E<gt> = $uid>' does not guarantee, and the exact syntax
+which C<$E<lt> = $E<gt> = $uid> does not guarantee, and the exact syntax
 of which may vary from between operating systems.
 
 C<Proc::UID> is also very pedantic about making sure that operations
