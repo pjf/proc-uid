@@ -37,25 +37,29 @@ PROTOTYPES: DISABLE
 # Low-level calls to get our privileges.
 # These *should* always return the same as $< and $>, $( and $)
 
-int geteuid()
+int
+geteuid()
 	CODE:
 		RETVAL = geteuid();
 	OUTPUT:
 		RETVAL
 
-int getruid()
+int
+getruid()
 	CODE:
 		RETVAL = getuid();
 	OUTPUT:
 		RETVAL
 
-int getegid()
+int
+getegid()
 	CODE:
 		RETVAL = getegid();
 	OUTPUT:
 		RETVAL
 
-int getrgid()
+int
+getrgid()
 	CODE:
 		RETVAL = getgid();
 	OUTPUT:
@@ -65,7 +69,8 @@ int getrgid()
 
 #ifdef SYS_getresuid
 
-int suid_is_cached()
+int
+suid_is_cached()
 	CODE:
 		RETVAL = 0;
 	OUTPUT:
@@ -108,7 +113,8 @@ getsgid()
 # This records our saved privileges upon startup.  Yes, this is
 # is caching.  I wish there were a better way.
 
-int suid_is_cached()
+int
+suid_is_cached()
 	CODE:
 		RETVAL = 1;
 	OUTPUT:
