@@ -2,11 +2,13 @@ Proc::UID
 Paul Fenwick (pjf@cpan.org), May 2004
 
 WARNING:
+========
 
 This module is released for testing and review only.  It should *not*
 be used for manipulating UIDs in any production code.
 
 TESTING:
+========
 
 The tests in this module are designed so that they can all be run
 if 'make test' is done with root privileges.  If you find that most
@@ -25,3 +27,11 @@ invoke it with:
 
 It will give you a chance to read the information it is about to 
 send before sending.
+
+If you wish to send the test results without user interaction, you can
+run sendtests with the -y switch:
+
+	./sendtests -y
+
+Thank-you for testing Proc::UID.
+
