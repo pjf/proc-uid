@@ -47,7 +47,7 @@ use strict;
 use warnings;
 use XSLoader;
 use Exporter;
-use vars qw/$VERSION @ISA @EXPORT_OK $SUID $SGID/;
+use vars qw/$VERSION @ISA @EXPORT_OK $SUID $SGID $EUID $RUID/;
 
 $VERSION = 0.02;
 @ISA = qw(Exporter);
@@ -63,15 +63,17 @@ XSLoader::load 'Proc::UID';
 
 # These are simply standard names for $<, $>, $( and $).
 
-*RUID = *<;
-*EUID = *>;
-*RGID = *(;
-*EGID = *);
+{ no warnings 'once';
+	*RGID = *(;
+	*EGID = *);
+}
 
 # Ties for SUID/SGID
 
 tie $SUID, 'Proc::UID::SUID';
 tie $SGID, 'Proc::UID::SGID';
+tie $EUID, 'Proc::UID::EUID';
+tie $RUID, 'Proc::UID::RUID';
 
 # These *should* be expanded to actually check the operation succeeded.
 
@@ -80,33 +82,25 @@ sub seteuid { $> = $_[0]; }
 sub setrgid { $( = $_[0]; }
 sub setegid { $) = $_[0]; }
 
-# Package for allowing $SUID to work correctly.
+# Packages for tied variables are from here on.
 package Proc::UID::SUID;
+sub TIESCALAR { my $val; return bless \$val, $_[0]; }
+sub FETCH     { return Proc::UID::getsuid(); }
+sub STORE     { return Proc::UID::setsuid($_[1]); }
 
-sub TIESCALAR {
-	my $class = shift;
-	my $suid  = Proc::UID::getsuid();
-	return bless \$suid, $class;
-}
-
-sub FETCH {
-	return Proc::UID::getsuid();
-}
-
-sub STORE {
-	return Proc::UID::setsuid($_[1]);
-}
-
-# Package for allowing $SGID to work correctly.
 package Proc::UID::SGID;
+sub TIESCALAR { my $val; return bless \$val, $_[0]; }
+sub FETCH     { return Proc::UID::getsgid(); }
+sub STORE     { return Proc::UID::setsgid($_[1]); }
 
-sub TIESCALAR {
-	my $class = shift;
-	my $sgid = Proc::UID::getsgid();
-	return bless \$sgid, $class;
-}
+package Proc::UID::RUID;
+sub TIESCALAR { my $val; return bless \$val, $_[0]; }
+sub FETCH     { return Proc::UID::getruid(); }
+sub STORE     { return Proc::UID::setruid($_[1]); }
 
-sub FETCH { return Proc::UID::getsgid(); }
-sub STORE { return Proc::UID::setsgid($_[1]); }
+package Proc::UID::EUID;
+sub TIESCALAR { my $val; return bless \$val, $_[0]; }
+sub FETCH     { return Proc::UID::geteuid(); }
+sub STORE     { return Proc::UID::seteuid($_[1]); }
 
 1;
