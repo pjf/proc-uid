@@ -6,6 +6,12 @@ Proc::UID - Manipulate a variety of UID and GID settings.
 
 	use Proc::UID;
 
+=head1 WARNING
+
+This release of Proc::UID is for testing and review purposes only.
+Please do not use it in production code.  The interface may change,
+and the underlying code has not yet been rigourously tested.
+
 =head1 DESCRIPTION
 
 Perl only has concepts of effective and real UIDs, whereas a
@@ -50,22 +56,6 @@ our @EXPORT_OK = qw(	getruid geteuid getrgid getegid
 			setuid_permanent setsuid);
 
 XSLoader::load 'Proc::UID';
-
-# Try to find a tainted() routine.  If not, define our own.
-# This may not be needed if we're doing everything via XS,
-# which can probably just poke around inside the vars directly.
-eval "use Scalar::Util 'tainted'";
-if ($@ or ! *tainted{CODE}) {
-	# Hmm, no Scalar::Util, or it didn't provide a tainted().
-	# We'll define our own.  The following code is shamelessly
-	# ripped from Scalar::Util 1.14
-	*tainted = sub {
-		local($@, $SIG{__DIE__}, $SIG{__WARN__});
-		local $^W = 0;
-		eval { kill 0 * $_[0] };
-		$@ =~ /^Insecure/;
-	}
-}
 
 # These *should* be expanded to actually check the operation succeeded.
 
