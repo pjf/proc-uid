@@ -203,14 +203,15 @@ L<Setuid Demystified|http://www.cs.berkeley.edu/~hchen/paper/usenix02.html>
 package Proc::UID;
 use strict;
 use warnings;
-use XSLoader;
+# use XSLoader;
+use DynaLoader;
 use Exporter;
 use Carp;
 use vars qw/$VERSION @ISA @EXPORT_OK $SUID $SGID $EUID $RUID $EGID $RGID
 	    %EXPORT_TAGS/;
 
 $VERSION = 0.04;
-@ISA = qw(Exporter);
+@ISA = qw(Exporter DynaLoader);
 @EXPORT_OK = qw(	getruid geteuid getrgid getegid
 			setruid seteuid setrgid setegid
 			getsuid getsgid setsuid setsgid
@@ -231,7 +232,9 @@ $VERSION = 0.04;
 );
 
 # Most of our hard work is done in XS.
-XSLoader::load 'Proc::UID';
+# XSLoader::load 'Proc::UID';
+
+bootstrap Proc::UID;
 
 # Ties for SUID/SGID
 
