@@ -95,3 +95,7 @@ setuid_permanent(uid)
 		if (setresuid(uid,uid,uid) == -1) {
 			croak("Could not drop privileges in setuid_permanent");
 		}
+		# If we don't update Perl's special variables directly,
+		# then Perl doesn't believe we've changed UIDs.  Oh dear!
+		PL_uid = uid;
+		PL_euid = uid;
