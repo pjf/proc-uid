@@ -51,6 +51,22 @@ our @EXPORT_OK = qw(	getruid geteuid getrgid getegid
 
 XSLoader::load 'Proc::UID';
 
+# Try to find a tainted() routine.  If not, define our own.
+# This may not be needed if we're doing everything via XS,
+# which can probably just poke around inside the vars directly.
+eval "use Scalar::Util 'tainted'";
+if ($@ or ! *tainted{CODE}) {
+	# Hmm, no Scalar::Util, or it didn't provide a tainted().
+	# We'll define our own.  The following code is shamelessly
+	# ripped from Scalar::Util 1.14
+	*tainted = sub {
+		local($@, $SIG{__DIE__}, $SIG{__WARN__});
+		local $^W = 0;
+		eval { kill 0 * $_[0] };
+		$@ =~ /^Insecure/;
+	}
+}
+
 # These are included for completeness.
 
 sub getruid { return $< };
