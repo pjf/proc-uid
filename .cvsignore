@@ -5,3 +5,4 @@ UID.c
 blib
 pm_to_blib
 Proc-UID-*.tar.gz
+META.yml
