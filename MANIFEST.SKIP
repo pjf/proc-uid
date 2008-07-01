@@ -1,0 +1,12 @@
+.cvsignore
+blib/
+CVS/
+MANIFEST.skip
+Proc-UID-.*tar.gz
+sendtests
+Supported-Systems
+UID.bs
+UID.c
+UID.o
+Makefile.old
+MANIFEST.bak
