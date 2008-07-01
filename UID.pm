@@ -180,7 +180,9 @@ UID under Linux.
 
 Paul Fenwick	pjf@cpan.org
 
-Copyright (c) 2004 Paul Fenwick.  All rights reserved.  This
+=head1 LICENSE
+
+Copyright (c) 2004-2008 Paul Fenwick.  All rights reserved.  This
 program is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
 
