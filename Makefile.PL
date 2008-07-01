@@ -1,11 +1,10 @@
 #!/usr/bin/perl -w
 use strict;
 
-# Makefile.PL for Proc::UID
-# Paul Fenwick <pjf@cpan.org>, May 2004
+use inc::Module::Install;
 
-use ExtUtils::MakeMaker;
+name(		'Proc-UID');
+all_from(	'UID.pm');
+license(	'perl');
 
-WriteMakefile( NAME         => "Proc::UID",
-               VERSION_FROM => "UID.pm"
-             );
+WriteAll();
