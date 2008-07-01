@@ -1,0 +1,3 @@
+0.05
+	* Upgraded build system from ExtUtils::MakeMaker to
+	  Module::Install
