@@ -17,12 +17,13 @@ Proc::UID - Manipulate a variety of UID and GID settings.
 
 =head1 WARNING
 
-This release of Proc::UID is for testing and review purposes only.
-Please do not use it in production code.  The interface may change,
-and the underlying code has not yet been rigourously tested.
+If your code is running with additional privileges, it is recommended
+that you I<always> carefully test and audit your code, including
+this module if you use it.
 
-If you discover any of the included tests fail, or that any other
-problems with the code, please contact Paul Fenwick, pjf@cpan.org.
+This module is provided "as is", without warranty of any kind, either
+express or implied, including, but limited to, the implied warranties
+of merchantability and fitness for a particular purpose.
 
 =head1 DESCRIPTION
 
@@ -176,21 +177,18 @@ The module does not manipulate or make available access to any
 other operating-system-specific privileges, such as the filesystem
 UID under Linux.
 
-=head1 AUTHOR
+=head1 AUTHOR AND LICENSE
 
-Paul Fenwick	pjf@cpan.org
-
-=head1 LICENSE
-
-Copyright (c) 2004-2008 Paul Fenwick.  All rights reserved.  This
-program is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself.
+Copyright (c) 2004-2008 Paul Fenwick E<lt>pjf@cpan.orgE<gt>.  All
+rights reserved.  This program is free software; you can redistribute
+it and/or modify it under the same terms as Perl itself.
 
 =head1 TESTING STRATEGY
 
 Proc::UID's testing strategy is designed to be very complete.  Should
 any tests fail when building Proc::UID on your system, then it is
-recommended that you do not use Proc::UID.
+recommended that you do not use Proc::UID, and report the failing
+tests to the author.
 
 For complete testing, Proc::UID's tests need to run as root.
 
@@ -198,7 +196,10 @@ For complete testing, Proc::UID's tests need to run as root.
 
 L<perlsec> and L<perlvar>
 
-L<Setuid Demystified|http://www.cs.berkeley.edu/~hchen/paper/usenix02.html>
+Perl Training Australia's I<Perl Security> course manual,
+available from L<http://perltraining.com.au/notes.html>
+
+Setuid Demystified, L<http://www.cs.berkeley.edu/~hchen/paper/usenix02.html>
 
 =cut
 
