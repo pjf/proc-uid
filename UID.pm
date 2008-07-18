@@ -146,7 +146,7 @@ variable in Perl.
 
 =item B<getruid()> / B<getrgid()>
 
-=item B<getsuid()> / B<getsuid()>
+=item B<getsuid()> / B<getsgid()>
 
 Return the effective, real, or saved user-id/group-id respectively.
 These functions will always make a system call to get the current
@@ -161,6 +161,21 @@ value.
 Set the effective, real, or saved user-id/group-id respectively.
 If the operation fails, an exception will be thrown.
 
+=item suid_is_cached()
+
+Not all systems support direct manipulation of the saved UID, or
+require use of system calls which C<Proc::UID> does not yet
+understand.
+
+Since the saved UID is always equal to the effective UID when a
+process starts, C<Proc::UID> can infer the value of the saved
+UID even if it can't read it directly.  If this is the case,
+then C<suid_is_cached> will return true.
+
+If C<suid_is_cached> returns false, then you're running on a
+system where C<Proc::UID> knows how to directly manipulate saved
+UIDs.
+
 =back
 
 =head1 BUGS
@@ -168,10 +183,6 @@ If the operation fails, an exception will be thrown.
 Many operating systems have different interfaces into their
 extra UIDs.  This module has not yet been tested under all of
 them.
-
-The current implementation of this module assumes the presence
-of a C<setresuid> call.  This does not exist on all operating
-systems.
 
 The module does not manipulate or make available access to any
 other operating-system-specific privileges, such as the filesystem
@@ -185,12 +196,12 @@ it and/or modify it under the same terms as Perl itself.
 
 =head1 TESTING STRATEGY
 
-Proc::UID's testing strategy is designed to be very complete.  Should
-any tests fail when building Proc::UID on your system, then it is
-recommended that you do not use Proc::UID, and report the failing
+Proc::UID's testing strategy is intended to be very complete.  Should
+any tests fail when building C<Proc::UID> on your system, then it is
+recommended that you do not use C<Proc::UID>, and report the failing
 tests to the author.
 
-For complete testing, Proc::UID's tests need to run as root.
+For complete testing, C<Proc::UID>'s tests need to run as root.
 
 =head1 SEE ALSO
 
@@ -200,6 +211,8 @@ Perl Training Australia's I<Perl Security> course manual,
 available from L<http://perltraining.com.au/notes.html>
 
 Setuid Demystified, L<http://www.cs.berkeley.edu/~hchen/paper/usenix02.html>
+
+L<Unix::SavedIDs>, L<Unix::SetUser>
 
 =cut
 
