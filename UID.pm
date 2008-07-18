@@ -223,7 +223,7 @@ use 5.006;
 use DynaLoader;
 use Exporter;
 use Carp;
-use vars qw($SUID $SGID $EUID $RUID $EGID $RGID)
+use vars qw($SUID $SGID $EUID $RUID $EGID $RGID);
 
 our $VERSION = 0.05;
 our @ISA = qw(Exporter DynaLoader);
