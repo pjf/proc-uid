@@ -188,7 +188,7 @@ The module does not manipulate or make available access to any
 other operating-system-specific privileges, such as the filesystem
 UID under Linux.
 
-=head1 AUTHOR AND LICENSE
+=head1 LICENSE
 
 Copyright (c) 2004-2008 Paul Fenwick E<lt>pjf@cpan.orgE<gt>.  All
 rights reserved.  This program is free software; you can redistribute
@@ -219,16 +219,15 @@ L<Unix::SavedIDs>, L<Unix::SetUser>
 package Proc::UID;
 use strict;
 use warnings;
-# use XSLoader;
+use 5.006;
 use DynaLoader;
 use Exporter;
 use Carp;
-use vars qw/$VERSION @ISA @EXPORT_OK $SUID $SGID $EUID $RUID $EGID $RGID
-	    %EXPORT_TAGS/;
+use vars qw($SUID $SGID $EUID $RUID $EGID $RGID)
 
-$VERSION = 0.04;
-@ISA = qw(Exporter DynaLoader);
-@EXPORT_OK = qw(	getruid geteuid getrgid getegid
+our $VERSION = 0.05;
+our @ISA = qw(Exporter DynaLoader);
+our @EXPORT_OK = qw(	getruid geteuid getrgid getegid
 			setruid seteuid setrgid setegid
 			getsuid getsgid setsuid setsgid
 			suid_is_cached
@@ -236,7 +235,7 @@ $VERSION = 0.04;
 			drop_gid_temp drop_gid_perm restore_gid
 			$RUID $EUID $RGID $EGID $SUID $SGID);
 
-%EXPORT_TAGS = (
+our %EXPORT_TAGS = (
 	vars  => [qw(	$RUID $EUID $RGID $EGID $SUID $SGID)],
 	funcs => [qw(	getruid geteuid getrgid getegid
 			setruid seteuid setrgid setegid
