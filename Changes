@@ -1,3 +1,7 @@
 0.05
 	* Upgraded build system from ExtUtils::MakeMaker to
 	  Module::Install
+
+	* Added t/pod.t and t/pod_coverage.t
+
+	* Many documentation improvements.
